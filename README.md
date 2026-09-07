@@ -79,6 +79,24 @@ different key is needed, rather than reporting a generic failure.
   `brain.propose`.
 - **No web UI.** Host-only plugin: it contributes tools, registers no slots, ships no client bundle.
 
+## Known boundary
+
+`@deepseek-ai/dsh-tools` is a real dependency here (installed with the plugin), but it declares
+`@deepseek-ai/cordis` as its own peer. In a clean profile **without `auto-install-peers`**, cordis
+will not be installed — this is upstream of this plugin and affects any third-party plugin that
+uses `dsh-tools`.
+
+Normally the harness supplies cordis (it is a dependency of `dsh` itself). If you hit
+`Cannot find package '@deepseek-ai/cordis'`, run this in the profile:
+
+```sh
+pnpm config set auto-install-peers true
+```
+
+**This plugin deliberately does not depend on its own copy of cordis** — cordis is the DI
+container, and duplicating it splits Context/Service identity, which is far worse than a missing
+dependency.
+
 ## Development
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).

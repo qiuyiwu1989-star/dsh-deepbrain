@@ -72,6 +72,22 @@ key 写在里面就会跟着出现在日志和截图里。
 - **不改深脑里的数据**（除非你用 `deepbrain_call` 显式调写入类工具，而那需要 `brain.propose`）。
 - **没有 Web 界面。** 这是 host-only 插件，只贡献工具，不注册 slot、不构建 client bundle。
 
+## 已知边界
+
+`@deepseek-ai/dsh-tools` 是本插件的**真依赖**（随插件一起装），但它自己把
+`@deepseek-ai/cordis` 声明成 peer。在**没有开 `auto-install-peers`** 的干净 profile 里，
+cordis 不会被装进来——这条链在本插件上游，任何使用 `dsh-tools` 的第三方插件都一样。
+
+正常情况下由 harness 提供 cordis（它是 `dsh` 自己的依赖）。如果遇到
+`Cannot find package '@deepseek-ai/cordis'`，在 profile 里补一句：
+
+```sh
+pnpm config set auto-install-peers true
+```
+
+**本插件不会自己去依赖一份 cordis** —— cordis 是 DI 容器，复制一份会造成
+Context/Service 的身份分裂，那比缺依赖严重得多。
+
 ## 开发
 
 见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
