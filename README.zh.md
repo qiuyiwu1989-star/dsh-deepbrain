@@ -74,6 +74,10 @@ key 写在里面就会跟着出现在日志和截图里。
 
 ## 已知边界
 
+> 2026-09-07 已在真实 profile 里端到端验过：从 GitHub 装、加载、拿真 key 打到生产，
+> 取回真实内容；权限不足时也如期返回「换一把 key」而不是笼统失败。
+> 下面这条只在**没有 auto-install-peers 的裸 profile** 里会遇到。
+
 `@deepseek-ai/dsh-tools` 是本插件的**真依赖**（随插件一起装），但它自己把
 `@deepseek-ai/cordis` 声明成 peer。在**没有开 `auto-install-peers`** 的干净 profile 里，
 cordis 不会被装进来——这条链在本插件上游，任何使用 `dsh-tools` 的第三方插件都一样。

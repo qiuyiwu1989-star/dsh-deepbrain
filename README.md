@@ -81,6 +81,11 @@ different key is needed, rather than reporting a generic failure.
 
 ## Known boundary
 
+> Verified end-to-end in a real profile on 2026-09-07: installed from GitHub, loaded, called
+> production with a real key, got real content back; a scope-limited key correctly returns
+> "use a different key" rather than a generic failure. The note below only applies to a
+> **bare profile without `auto-install-peers`**.
+
 `@deepseek-ai/dsh-tools` is a real dependency here (installed with the plugin), but it declares
 `@deepseek-ai/cordis` as its own peer. In a clean profile **without `auto-install-peers`**, cordis
 will not be installed — this is upstream of this plugin and affects any third-party plugin that
