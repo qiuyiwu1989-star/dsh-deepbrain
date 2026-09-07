@@ -1,0 +1,17 @@
+# 把深脑接进 harness 的插件组合。
+#
+# 用 dsh plugin 安装后会自动进入 profile 的 bundle 列表；也可以手动挂：
+#   dsh web --patch ./node_modules/dsh-deepbrain/cordis.patch.yml
+- insert:
+    - id: deepbrain
+      name: 'dsh-deepbrain'
+      config:
+        # 深脑 MCP 端点。自托管改成自己的地址
+        endpoint: 'https://shennao.zaowuyun.com/api/mcp'
+        # API key 留空 —— 用环境变量 DEEPBRAIN_API_KEY。
+        # 写在这里会被 `dsh --dump-config` 原样打印出来，跟着进日志和截图。
+        apiKey: ''
+        # 深脑的多步检索可能要一两分钟
+        timeoutMs: 120000
+        # 关掉则不注册 deepbrain_call 透传口，只留五个成形工具
+        passthrough: true

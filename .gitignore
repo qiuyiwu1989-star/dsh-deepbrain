@@ -1,0 +1,6 @@
+node_modules/
+*.tsbuildinfo
+.DS_Store
+# lib/ **故意提交**：这个插件走 GitHub 分发，而 Git 给的是源码不是构建产物。
+# 提交产物之后用户 `dsh plugin add github:...` 不需要允许执行依赖脚本（pnpm ≥10 默认拦截）。
+# 代价是改源码必须重新 build 并一起提交，见 CONTRIBUTING.md。
