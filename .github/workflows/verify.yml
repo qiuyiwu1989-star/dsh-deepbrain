@@ -1,0 +1,53 @@
+# 门禁：typecheck / 自测 / 构建，外加一条这个仓库特有的——
+# **提交进来的 lib/ 必须和源码同步**。
+#
+# 为什么需要它：这个插件走 GitHub 分发，Git 给的是源码不是产物，所以 lib/ 是提交进版本库的
+# （见 CONTRIBUTING.md）。代价是改完 src/ 忘了重新 build，用户装到的就是旧代码——
+# 而这件事本地没有任何检查会拦。CONTRIBUTING 里原话是「没有任何自动检查会拦住你」，
+# 这个 workflow 就是来把那句话变成假的。
+#
+# 前提是构建可复现：连续两次 build 产物逐字节相同（已实测），否则这条门禁会天天误报。
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: typecheck
+        run: pnpm typecheck
+
+      # 真的把每个 defineTool 跑一遍：value-schema DSL 的违规 typecheck 一律放行，
+      # 只有运行时才抛 UNSUPPORTED_SCHEMA
+      - name: 自测
+        run: pnpm test
+
+      - name: 构建
+        run: pnpm build
+
+      - name: 提交的 lib/ 必须与源码同步
+        run: |
+          if ! git diff --quiet -- lib; then
+            echo "::error::lib/ 与 src/ 不同步。本地跑 'pnpm build' 并把 lib/ 一起提交。"
+            echo "--- 差异 ---"
+            git diff --stat -- lib
+            exit 1
+          fi
+          echo "lib/ 与源码一致"
